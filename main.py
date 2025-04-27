@@ -22,6 +22,7 @@ app.add_middleware(
 
 # Lấy API Key
 OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY")
+openai.base_url = "https://openrouter.ai/api/v1"
 
 # Định nghĩa body
 class QuestionRequest(BaseModel):
