@@ -18,6 +18,7 @@ app.add_middleware(
 
 # Lấy API Key
 OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY")
+print("API Key trên server:", OPENROUTER_API_KEY)
 
 # Định nghĩa body
 class QuestionRequest(BaseModel):
