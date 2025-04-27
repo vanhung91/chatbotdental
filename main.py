@@ -7,7 +7,7 @@ from fastapi.middleware.cors import CORSMiddleware
 # Khởi tạo app
 app = FastAPI()
 
-# Cho phép gọi API từ giao diện web
+# Cho phép gọi API từ web
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -18,7 +18,6 @@ app.add_middleware(
 
 # Lấy API Key
 OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY")
-print("API Key trên server:", OPENROUTER_API_KEY)
 
 # Định nghĩa body
 class QuestionRequest(BaseModel):
@@ -32,11 +31,16 @@ def read_root():
 async def ask_question(body: QuestionRequest):
     question = body.question
 
+    if not OPENROUTER_API_KEY:
+        return {"error": "API Key không tồn tại trên server"}
+
     try:
         url = "https://openrouter.ai/api/v1/chat/completions"
         headers = {
             "Authorization": f"Bearer {OPENROUTER_API_KEY}",
-            "Content-Type": "application/json"
+            "Content-Type": "application/json",
+            "HTTP-Referer": "https://yourwebsite.com/",  # Bạn có thể đổi thành website bạn (tạm để vậy cũng được)
+            "X-Title": "Dental Chatbot Project"
         }
         payload = {
             "model": "openai/gpt-3.5-turbo-1106",
@@ -44,9 +48,7 @@ async def ask_question(body: QuestionRequest):
                 {
                     "role": "system",
                     "content": (
-                        "Với vai trò là một bác sĩ chuyên khoa răng hàm mặt chuyên sâu về cấy ghép Implant. "
-                        "Với 20 năm kinh nghiệm, bạn rất giỏi nắm bắt tâm lý khách hàng, bạn hãy trả lời chính xác, dễ hiểu về các chủ đề như: thời gian điều trị, quy trình, chi phí trồng Implant, chăm sóc sau cấy ghép. "
-                        "Nếu bệnh nhân cần tư vấn thêm, hãy lịch sự mời họ đến phòng khám để thăm khám."
+                        "Bạn là bác sĩ chuyên cấy ghép Implant, hãy trả lời chính xác, dễ hiểu các câu hỏi liên quan đến trồng Implant."
                     )
                 },
                 {
